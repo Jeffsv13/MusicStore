@@ -1,3 +1,5 @@
+using MusicStore.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -7,6 +9,8 @@ builder.Services.AddControllers();
 //builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+//Registering Services
+builder.Services.AddSingleton<GenreRepository>();
 
 var app = builder.Build();
 
