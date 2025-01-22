@@ -7,9 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\MusicStore.Dto\MusicStore.Dto.csproj" />
+    <PackageReference Include="microsoft.entityframeworkcore.sqlserver" Version="9.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\MusicStore.Entities\MusicStore.Entities.csproj" />
-    <ProjectReference Include="..\MusicStore.Persistence\MusicStore.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

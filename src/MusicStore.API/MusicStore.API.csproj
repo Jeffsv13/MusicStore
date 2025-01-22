@@ -8,10 +8,17 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
+    <PackageReference Include="microsoft.entityframeworkcore.sqlserver" Version="9.0.1" />
+    <PackageReference Include="microsoft.entityframeworkcore.tools" Version="9.0.1">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\MusicStore.Dto\MusicStore.Dto.csproj" />
+    <ProjectReference Include="..\MusicStore.Persistence\MusicStore.Persistence.csproj" />
     <ProjectReference Include="..\MusicStore.Repositories\MusicStore.Repositories.csproj" />
   </ItemGroup>
 

@@ -1,4 +1,7 @@
-using MusicStore.Repositories;
+using Microsoft.EntityFrameworkCore;
+using MusicStore.Persistence;
+using MusicStore.Repositories.Abstractions;
+using MusicStore.Repositories.Implementations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,8 +12,15 @@ builder.Services.AddControllers();
 //builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//Configuring context
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+
 //Registering Services
-builder.Services.AddSingleton<GenreRepository>();
+builder.Services.AddScoped<IGenreRepository, GenreRepository>();
 
 var app = builder.Build();
 
