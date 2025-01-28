@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MusicStore.Entities;
+using MusicStore.Entities.Info;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,9 +21,11 @@ public class ApplicationDbContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         //Customizing the migration...
-        modelBuilder.Entity<Genre>().Property(x => x.Name).HasMaxLength(50);
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        modelBuilder.Ignore<ConcertInfo>();
+        modelBuilder.Entity<ConcertInfo>().HasNoKey();
     }
 
     //Entities to tables
-    public DbSet<Genre> Genres { get; set; }
+    //public DbSet<Genre> Genres { get; set; }
 }
