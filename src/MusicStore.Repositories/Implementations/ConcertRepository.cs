@@ -19,12 +19,42 @@ public class ConcertRepository : RepositoryBase<Concert>, IConcertRepository
             .AsNoTracking()
             .ToListAsync();
     }
+
+    public async Task<Concert?> GetAsyncById(int id)
+    {
+        return await context.Set<Concert>()
+            .Include(x => x.Genre)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == id);
+    }
     public async Task<ICollection<ConcertInfo>> GetAsync(string? title)
     {
         //eager loading approach optimizado
+        //return await context.Set<Concert>()
+        //    .Include(x => x.Genre)
+        //    .Where(x => x.Title.Contains(title ?? string.Empty))
+        //    .AsNoTracking()
+        //    .Select(x => new ConcertInfo
+        //    {
+        //        Id = x.Id,
+        //        Title = x.Title,
+        //        Description = x.Description,
+        //        Place = x.Place,
+        //        UnitPrice = x.UnitPrice,
+        //        GenreId = x.GenreId,
+        //        Genre = x.Genre.Name,
+        //        DateEvent = x.DateEvent.ToShortDateString(),
+        //        TimeEvent = x.DateEvent.ToShortTimeString(),
+        //        ImageUrl = x.ImageUrl,
+        //        TicketsQuantity = x.TicketsQuantity,
+        //        Finalized = x.Finalized,
+        //        Status = x.Status ? "Activo" : "Inactivo"
+        //    })
+        //    .ToListAsync();
+        //lazy loading approach
         return await context.Set<Concert>()
-            .Include(x => x.Genre)
             .Where(x => x.Title.Contains(title ?? string.Empty))
+            .IgnoreQueryFilters()
             .AsNoTracking()
             .Select(x => new ConcertInfo
             {
@@ -43,5 +73,17 @@ public class ConcertRepository : RepositoryBase<Concert>, IConcertRepository
                 Status = x.Status ? "Activo" : "Inactivo"
             })
             .ToListAsync();
+
+        //var query = context.Set<ConcertInfo>().FromSqlRaw("usp_ListConcerts {0}", title ?? string.Empty);
+        //return await query.ToListAsync();
+    }
+
+    public async Task FinalizeAsync(int id)
+    {
+        var entity = await GetAsync(id);
+        if(entity is not null) {
+            entity.Finalized = true;
+            await UpdateAsync();
+        }
     }
 }

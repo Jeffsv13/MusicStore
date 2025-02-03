@@ -8,9 +8,9 @@ namespace MusicStore.Entities;
 
 public class Concert : EntityBase
 {
-    public string Title { get; set; } = null!;
-    public string Description { get; set; } = null!;
-    public string Place { get; set; } = null!;
+    public string Title { get; set; } = default!;
+    public string Description { get; set; } = default!;
+    public string Place { get; set; } = default!;
     public double Price { get; set; }
     public double UnitPrice { get; set; }
     public int GenreId { get; set; }
@@ -19,5 +19,5 @@ public class Concert : EntityBase
     public int TicketsQuantity { get; set; }
     public bool Finalized { get; set; }
     // Navigation property
-    public Genre Genre { get; set; } = null!;
+    public virtual Genre Genre { get; set; } = default!;
 }

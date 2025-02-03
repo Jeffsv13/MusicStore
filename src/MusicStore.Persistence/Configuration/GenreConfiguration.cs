@@ -15,5 +15,6 @@ public class GenreConfiguration : IEntityTypeConfiguration<Genre>
     {
         builder.Property(x => x.Name).HasMaxLength(50);
         builder.ToTable("Genre", "Musicales");
+        builder.HasQueryFilter(x => x.Status);
     }
 }

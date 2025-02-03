@@ -3,103 +3,57 @@ using MusicStore.Dto.Request;
 using MusicStore.Dto.Response;
 using MusicStore.Entities;
 using MusicStore.Repositories.Abstractions;
+using MusicStore.Services.Abstractions;
 
 namespace MusicStore.API.Controllers;
 [ApiController]
 [Route("api/concerts")]
 public class ConcertsController : ControllerBase
 {
-    private readonly IConcertRepository repository;
-    private readonly IGenreRepository genreRepository;
-    private readonly ILogger<ConcertsController> logger;
+    private readonly IConcertService service;
 
     public ConcertsController(
-        IConcertRepository repository,
-        IGenreRepository genreRepository,
-        ILogger<ConcertsController> logger)
+        IConcertService service)
     {
-        this.repository = repository;
-        this.genreRepository = genreRepository;
-        this.logger = logger;
+        this.service = service;
     }
 
-    [HttpGet]
-    public async Task<ActionResult> Get()
-    {
-        var concertsDb = await repository.GetAsync();
-        return Ok(concertsDb);
-    }
     [HttpGet("title")]
     public async Task<ActionResult> Get(string? title)
     {
-        var response = new BaseResponseGeneric<ICollection<ConcertResponseDto>>();
-        //try
-        //{
-        //    //Mapping
-        //    var concertsDb = await repository.GetAsync(x => x.Title.Contains(title??string.Empty), x => x.DateEvent);
-
-        //    var concertsDto = concertsDb.Select(x => new ConcertResponseDto
-        //    {
-        //        Id = x.Id,
-        //        Title = x.Title,
-        //        Description = x.Description,
-        //        Place = x.Place,
-        //        UnitPrice = x.UnitPrice,
-        //        GenreId = x.GenreId,
-        //        DateEvent = x.DateEvent,
-        //        ImageUrl = x.ImageUrl,
-        //        TicketsQuantity = x.TicketsQuantity,
-        //        Finalized = x.Finalized
-        //    }).ToList();
-
-        //    response.Data = concertsDto;
-        //    response.Success = true;
-        //    logger.LogInformation("Obteniendo todos los conciertos");
-        //    return Ok(response);
-        //}
-        //catch (Exception ex)
-        //{
-        //    response.ErrorMessage = "Ocurrió un error al obtener la información";
-        //    logger.LogError(ex, $"{response.ErrorMessage} {ex.Message}");
-        //    return BadRequest(response);
-        //}
-        var concerts = await repository.GetAsync(title);
-        return Ok(concerts);
+        var response = await service.GetAsync(title);
+        return response.Success ? Ok(response) : BadRequest(response);
     }
-    [HttpPost]
-    public async Task<IActionResult> Post(ConcertRequestDto concertRequestDto)
+
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult> Get(int id)
     {
-        var response = new BaseResponseGeneric<int>();
-        try
-        {
-            //validating genre id
-            var genre = await genreRepository.GetAsync(concertRequestDto.GenreId);
-            if(genre is null)
-            {
-                response.ErrorMessage = $"El id del género {concertRequestDto.GenreId} es incorreecto";
-                logger.LogWarning(response.ErrorMessage);
-                return BadRequest(response);
-            }
-            //mapping
-            var concertsDb = new Concert
-            {
-                Title = concertRequestDto.Title,
-                Description = concertRequestDto.Description,
-                Place = concertRequestDto.Place,
-                UnitPrice = concertRequestDto.UnitPrice,
-                GenreId = concertRequestDto.GenreId,
-                DateEvent = concertRequestDto.DateEvent,
-                ImageUrl = concertRequestDto.ImageUrl,
-                TicketsQuantity = concertRequestDto.TicketsQuantity
-            };
-            response.Data = await repository.AddAsync(concertsDb);
-            response.Success = true;
-        }
-        catch (Exception ex)
-        {
-            response.ErrorMessage = "Ocurrió un error al guardar la información";
-            logger.LogError(ex, ex.Message);
-        }
+        var response = await service.GetAsync(id);
+        return response.Success ? Ok(response) : NotFound(response);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult> Post(ConcertRequestDto request)
+    {
+        var response = await service.AddAsync(request);
+        return response.Success ? Ok(response) : BadRequest(response);
+    }
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult> Put(int id, ConcertRequestDto request)
+    {
+        var response = await service.UpdateAsync(id, request);
+        return response.Success ? Ok(response) : BadRequest(response);
+    }
+
+    [HttpDelete("{id:int}")]
+    public async Task<ActionResult> Delete(int id)
+    {
+        var response = await service.DeleteAsync(id);
         return Ok(response);
+    }
+    [HttpPatch("{id:int}")]
+    public async Task<ActionResult> Patch(int id)
+    {
+        return Ok(await service.FinalizeAsync(id));
     }
 }

@@ -23,9 +23,14 @@ public class ApplicationDbContext : DbContext
         //Customizing the migration...
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         modelBuilder.Ignore<ConcertInfo>();
-        modelBuilder.Entity<ConcertInfo>().HasNoKey();
+        //modelBuilder.Entity<ConcertInfo>().HasNoKey();
     }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if(!optionsBuilder.IsConfigured)
+            optionsBuilder.UseLazyLoadingProxies();
+    }
     //Entities to tables
     //public DbSet<Genre> Genres { get; set; }
 }
