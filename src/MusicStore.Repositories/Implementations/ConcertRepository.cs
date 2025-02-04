@@ -1,15 +1,21 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using MusicStore.Dto.Request;
 using MusicStore.Entities;
 using MusicStore.Entities.Info;
 using MusicStore.Persistence;
 using MusicStore.Repositories.Abstractions;
+using MusicStore.Repositories.Utils;
 
 namespace MusicStore.Repositories.Implementations;
 
 public class ConcertRepository : RepositoryBase<Concert>, IConcertRepository
 {
-    public ConcertRepository(ApplicationDbContext context) : base(context)
+    private readonly IHttpContextAccessor httpContext;
+
+    public ConcertRepository(ApplicationDbContext context, IHttpContextAccessor httpContext) : base(context)
     {
+        this.httpContext = httpContext;
     }
     public override async Task<ICollection<Concert>> GetAsync()
     {
@@ -27,32 +33,10 @@ public class ConcertRepository : RepositoryBase<Concert>, IConcertRepository
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id);
     }
-    public async Task<ICollection<ConcertInfo>> GetAsync(string? title)
+    public async Task<ICollection<ConcertInfo>> GetAsync(string? title, PaginationDto pagination)
     {
-        //eager loading approach optimizado
-        //return await context.Set<Concert>()
-        //    .Include(x => x.Genre)
-        //    .Where(x => x.Title.Contains(title ?? string.Empty))
-        //    .AsNoTracking()
-        //    .Select(x => new ConcertInfo
-        //    {
-        //        Id = x.Id,
-        //        Title = x.Title,
-        //        Description = x.Description,
-        //        Place = x.Place,
-        //        UnitPrice = x.UnitPrice,
-        //        GenreId = x.GenreId,
-        //        Genre = x.Genre.Name,
-        //        DateEvent = x.DateEvent.ToShortDateString(),
-        //        TimeEvent = x.DateEvent.ToShortTimeString(),
-        //        ImageUrl = x.ImageUrl,
-        //        TicketsQuantity = x.TicketsQuantity,
-        //        Finalized = x.Finalized,
-        //        Status = x.Status ? "Activo" : "Inactivo"
-        //    })
-        //    .ToListAsync();
         //lazy loading approach
-        return await context.Set<Concert>()
+        var queryable = context.Set<Concert>()
             .Where(x => x.Title.Contains(title ?? string.Empty))
             .IgnoreQueryFilters()
             .AsNoTracking()
@@ -72,10 +56,11 @@ public class ConcertRepository : RepositoryBase<Concert>, IConcertRepository
                 Finalized = x.Finalized,
                 Status = x.Status ? "Activo" : "Inactivo"
             })
-            .ToListAsync();
+            .AsQueryable();
 
-        //var query = context.Set<ConcertInfo>().FromSqlRaw("usp_ListConcerts {0}", title ?? string.Empty);
-        //return await query.ToListAsync();
+        await httpContext.HttpContext.InsertarPaginacionHeader(queryable);
+        var response = await queryable.OrderBy(x => x.Id).Paginate(pagination).ToListAsync();
+        return response;
     }
 
     public async Task FinalizeAsync(int id)

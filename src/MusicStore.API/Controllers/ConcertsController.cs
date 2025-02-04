@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MusicStore.Dto.Request;
-using MusicStore.Dto.Response;
-using MusicStore.Entities;
-using MusicStore.Repositories.Abstractions;
 using MusicStore.Services.Abstractions;
 
 namespace MusicStore.API.Controllers;
@@ -19,9 +16,9 @@ public class ConcertsController : ControllerBase
     }
 
     [HttpGet("title")]
-    public async Task<ActionResult> Get(string? title)
+    public async Task<ActionResult> Get(string? title, [FromQuery]PaginationDto pagination)
     {
-        var response = await service.GetAsync(title);
+        var response = await service.GetAsync(title, pagination);
         return response.Success ? Ok(response) : BadRequest(response);
     }
 
