@@ -6,4 +6,8 @@ using System.Threading.Tasks;
 
 namespace MusicStore.Dto.Request;
 
-public record SaleRequestDto(int ConcertId, short TicketsQuantity);
+public class LoginRequestDto
+{
+    public string Username { get; set; } = default!;
+    public string Password { get; set; } = default!;
+}

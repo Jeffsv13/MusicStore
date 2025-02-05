@@ -41,12 +41,13 @@ public class SaleService : ISaleService
             var customer = await customerRepository.GetByEmailAsync(email);
             if(customer == null)
             {
-                customer = new Customer
-                {
-                    Email = email,
-                    FullName = request.FullName
-                };
-                customer.Id = await customerRepository.AddAsync(customer);
+                throw new InvalidOperationException($"La cuenta {email} no esta registrada como cliente");
+                //customer = new Customer
+                //{
+                //    Email = request.Email,
+                //    FullName = request.FullName
+                //};
+                //customer.Id = await customerRepository.AddAsync(customer);
             }
 
             entity.CustomerId = customer.Id;

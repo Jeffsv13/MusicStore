@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Http;
+using MusicStore.Dto.Validations;
 
 namespace MusicStore.Dto.Request;
 
@@ -15,6 +12,8 @@ public class ConcertRequestDto
     public int GenreId { get; set; }
     public string DateEvent { get; set; } = default!;
     public string TimeEvent { get; set; } = default!;
-    public string? ImageUrl { get; set; }
+    [FileSizeValidation(1)]
+    [FileTypeValidation(FileTypeGroup.Image)]
+    public IFormFile? Image { get; set; }
     public int TicketsQuantity { get; set; }
 }

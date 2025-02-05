@@ -23,7 +23,6 @@ namespace MusicStore.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> Get()
         {
             var response = await service.GetAsync();
@@ -36,18 +35,22 @@ namespace MusicStore.API.Controllers
             return response.Success ? Ok(response) : NotFound(response);
         }
         [HttpPost]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Constants.RoleAdmin)]
+
         public async Task<IActionResult> Post( GenreRequestDto genreRequestDto)
         {
             var response = await service.AddAsync(genreRequestDto);
             return response.Success ? Ok(response) : BadRequest(response);
         }
         [HttpPut("{id:int}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Constants.RoleAdmin)]
         public async Task<IActionResult> Put(int id, GenreRequestDto genreRequestDto)
         {
             var response = await service.UpdateAsync(id, genreRequestDto);
             return response.Success ? Ok(response) : BadRequest(response);
         }
         [HttpDelete("{id:int}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Constants.RoleAdmin)]
         public async Task<IActionResult> Delete(int id)
         {
             var response = await service.DeleteAsync(id);

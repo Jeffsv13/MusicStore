@@ -1,10 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MusicStore.Dto.Request;
+using MusicStore.Entities;
 using MusicStore.Services.Abstractions;
 
 namespace MusicStore.API.Controllers;
 [ApiController]
 [Route("api/concerts")]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Constants.RoleAdmin)]
 public class ConcertsController : ControllerBase
 {
     private readonly IConcertService service;
@@ -16,6 +20,7 @@ public class ConcertsController : ControllerBase
     }
 
     [HttpGet("title")]
+    [AllowAnonymous]
     public async Task<ActionResult> Get(string? title, [FromQuery]PaginationDto pagination)
     {
         var response = await service.GetAsync(title, pagination);
@@ -23,6 +28,7 @@ public class ConcertsController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
+    [AllowAnonymous]
     public async Task<ActionResult> Get(int id)
     {
         var response = await service.GetAsync(id);
@@ -30,13 +36,13 @@ public class ConcertsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> Post(ConcertRequestDto request)
+    public async Task<ActionResult> Post([FromForm]ConcertRequestDto request)
     {
         var response = await service.AddAsync(request);
         return response.Success ? Ok(response) : BadRequest(response);
     }
     [HttpPut("{id:int}")]
-    public async Task<ActionResult> Put(int id, ConcertRequestDto request)
+    public async Task<ActionResult> Put(int id,[FromForm] ConcertRequestDto request)
     {
         var response = await service.UpdateAsync(id, request);
         return response.Success ? Ok(response) : BadRequest(response);

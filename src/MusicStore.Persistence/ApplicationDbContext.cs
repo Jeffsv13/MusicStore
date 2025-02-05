@@ -27,9 +27,9 @@ public class ApplicationDbContext : IdentityDbContext<MusicStoreUserIdentity>
         modelBuilder.Ignore<ConcertInfo>();
         //modelBuilder.Entity<ConcertInfo>().HasNoKey();
 
-        modelBuilder.Entity<MusicStoreUserIdentity>(x => x.ToTable("Usuario"));
-        modelBuilder.Entity<IdentityRole>(x => x.ToTable("Rol"));
-        modelBuilder.Entity<IdentityUserRole<string>>(x => x.ToTable("UsuarioRol"));
+        modelBuilder.Entity<MusicStoreUserIdentity>(x => x.ToTable("User"));
+        modelBuilder.Entity<IdentityRole>(x => x.ToTable("Role"));
+        modelBuilder.Entity<IdentityUserRole<string>>(x => x.ToTable("UserRole"));
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
