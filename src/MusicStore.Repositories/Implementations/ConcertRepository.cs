@@ -45,6 +45,7 @@ public class ConcertRepository : RepositoryBase<Concert>, IConcertRepository
                 Id = x.Id,
                 Title = x.Title,
                 Description = x.Description,
+                ExtendedDescription = x.ExtendedDescription,
                 Place = x.Place,
                 UnitPrice = x.UnitPrice,
                 GenreId = x.GenreId,

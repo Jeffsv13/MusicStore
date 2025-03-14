@@ -10,6 +10,7 @@ public class Concert : EntityBase
 {
     public string Title { get; set; } = default!;
     public string Description { get; set; } = default!;
+    public string ExtendedDescription { get; set; } = default!;
     public string Place { get; set; } = default!;
     public double Price { get; set; }
     public double UnitPrice { get; set; }

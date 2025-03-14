@@ -111,11 +111,13 @@ public class SaleService : ISaleService
         var response = new BaseResponseGeneric<ICollection<SaleResponseDto>>();
         try
         {
-            var dateInit = Convert.ToDateTime(search.DateStart);
-            var dateEnd = Convert.ToDateTime(search.DateEnd);
+            DateTime? dateInit = search.DateStart is not null ? Convert.ToDateTime(search.DateStart) : null;
+            DateTime? dateEnd = search.DateEnd is not null ? Convert.ToDateTime(search.DateEnd) : null;
 
             var data = await repository.GetAsync(
-                predicate: s => s.SaleDate >= dateInit && s.SaleDate <= dateEnd,
+                predicate: s =>
+                (dateInit == null || s.SaleDate >= dateInit) &&
+                (dateEnd == null || s.SaleDate <= dateEnd),
                 orderBy: x => x.OperationNumber,
                 pagination);
         }
@@ -143,6 +145,26 @@ public class SaleService : ISaleService
             response.ErrorMessage = "Error al filtrar las ventas del usuario por titulo.";
             logger.LogError(ex, "{ErrorMessage} {Message}", response.ErrorMessage, ex.Message);
         }
+        return response;
+    }
+
+    public async Task<BaseResponseGeneric<ICollection<SaleReportResponseDto>>> GetSaleReportAsync(DateTime dateStart, DateTime dateEnd)
+    {
+        var response = new BaseResponseGeneric<ICollection<SaleReportResponseDto>>();
+        try
+        {
+            //Codigo
+            var list = await repository.GetSaleReportAsync(dateStart, dateEnd);
+            response.Data = mapper.Map<ICollection<SaleReportResponseDto>>(list);
+            response.Success = true;
+        }
+        catch (Exception ex)
+        {
+
+            response.ErrorMessage = "Error al obtener los datos del reporte";
+            logger.LogError(ex,"{ErrorMessage} {Message}",response.ErrorMessage, ex.Message);
+        }
+
         return response;
     }
 }

@@ -34,7 +34,7 @@ public class SalesController : ControllerBase
     }
 
     [HttpGet("ListSalesByDate")]
-    public async Task<IActionResult> GetByDate([FromQuery] SaleByDateSearchDto search, [FromQuery] PaginationDto pagination)
+    public async Task<IActionResult> GetByDate([FromQuery] SaleByDateSearchDto? search, [FromQuery] PaginationDto pagination)
     {
         var response = await service.GetAsync(search, pagination);
         return response.Success ? Ok(response) : BadRequest(response);

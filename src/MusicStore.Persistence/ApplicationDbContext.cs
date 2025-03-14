@@ -25,7 +25,7 @@ public class ApplicationDbContext : IdentityDbContext<MusicStoreUserIdentity>
         //Customizing the migration...
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         modelBuilder.Ignore<ConcertInfo>();
-        //modelBuilder.Entity<ConcertInfo>().HasNoKey();
+        modelBuilder.Ignore<ReportInfo>();
 
         modelBuilder.Entity<MusicStoreUserIdentity>(x => x.ToTable("User"));
         modelBuilder.Entity<IdentityRole>(x => x.ToTable("Role"));

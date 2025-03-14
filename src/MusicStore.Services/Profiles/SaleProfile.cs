@@ -2,6 +2,7 @@
 using MusicStore.Dto.Request;
 using MusicStore.Dto.Response;
 using MusicStore.Entities;
+using MusicStore.Entities.Info;
 using System.Globalization;
 
 namespace MusicStore.Services.Profiles;
@@ -24,5 +25,6 @@ public class SaleProfile : Profile
             .ForMember(d => d.Title, o => o.MapFrom(x => x.Concert.Title))
             .ForMember(d => d.Fullname, o => o.MapFrom(x => x.Customer.FullName))
             .ForMember(d => d.SaleDate, o => o.MapFrom(x => x.SaleDate.ToString("dd/MM/yyyy HH:mm", culture)));
+        CreateMap<ReportInfo, SaleReportResponseDto>();
     }
 }
