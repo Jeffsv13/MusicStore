@@ -28,7 +28,7 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> Login(LoginRequestDto request)
     {
         var response = await service.LoginAsync(request);
-        return response.Success ? Ok(response) : BadRequest(response);
+        return response.Success ? Ok(response) : Unauthorized(response);
     }
     [HttpPost("RequestTokenToResetPassword")]
     public async Task<IActionResult> RequestTokenToResetPassword(ResetPasswordRequestDto request)
